@@ -1,24 +1,25 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, Link} from 'react-router-dom';
+import axios from "axios";
 
 import {Row, Col, Image, ListGroup, Button, Card} from "react-bootstrap";
 import Rating from "../components/Rating";
 
-import products from '../products';
-
 function ProductScreen() {
+    const [product, setProduct] = useState({});
     const params = useParams();
-    const product = products.find((el) => {
-        return el._id == params.id
-        // props.match.params.id
-    });
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/products/${params.id}`)
+            .then(response => setProduct(response.data));
+    }, []);
 
     return (
         <div>
             <Link to="/" className="btn btn-light my-3">Go Back</Link>
             <Row>
                 <Col md={6}>
-                    <Image src={product.image} alt={product.name} fluid />
+                    <Image src={product.img_url} alt={product.name} fluid />
                 </Col>
 
                 <Col md={3}>
