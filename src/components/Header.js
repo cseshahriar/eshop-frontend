@@ -21,7 +21,11 @@ function Header() {
                 </LinkContainer>
 
                 <LinkContainer to="/login">
-                  <Nav.Link><i className="fas fa-sign-in"></i> Login</Nav.Link>
+                  <Nav.Link><i className="fas fa-sign-in"></i> Sign In</Nav.Link>
+                </LinkContainer>
+
+                <LinkContainer to="/logout">
+                    <Nav.Link><i className="fas fa-sign-out"></i> Sign Out</Nav.Link>
                 </LinkContainer>
             </Nav>
           </Navbar.Collapse>
