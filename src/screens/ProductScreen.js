@@ -14,7 +14,6 @@ function ProductScreen() {
     const params = useParams();
     const [qty, setQty] = useState(1);
 
-    console.log("params id", params.id)
     const dispatch = useDispatch();
     const productDetails = useSelector(state => state.productDetails);
     const { error, loading, product } = productDetails;
