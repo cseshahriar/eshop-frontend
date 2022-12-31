@@ -8,7 +8,7 @@ import {addToCart, removeFromCart} from "../actions/cartActions";
 
 function CartScreen() {
     const params = useParams();
-    const location = useLocation()
+    const location = useLocation();
     const dispatch = useDispatch();
 
     const productId = params.id
