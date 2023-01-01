@@ -1,8 +1,23 @@
 import React from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {LinkContainer} from "react-router-bootstrap";
-import {Container, Navbar, Nav} from 'react-bootstrap';
+import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
+import {useNavigation} from "react-router-dom";
+
+import {logout} from "../actions/userActions";
+import {useNavigate} from "react-router-dom";
 
 function Header() {
+    const navigate = useNavigate();
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo } = userLogin;
+    const dispatch = useDispatch();
+
+    const logOutHandler = () => {
+        dispatch(logout());
+        navigate('/');
+    }
+
   return (
     <header>
       <Navbar bg="dark" expand="lg" variant='dark' collapseOnSelect>
@@ -16,17 +31,30 @@ function Header() {
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-                <LinkContainer to="/cart">
-                  <Nav.Link> <i className="fas fa-shopping-cart"></i> Cart</Nav.Link>
-                </LinkContainer>
+                {
+                    userInfo ? (
+                        <>
+                            <LinkContainer to="/cart">
+                                <Nav.Link> <i className="fas fa-shopping-cart"></i> Cart</Nav.Link>
+                            </LinkContainer>
 
-                <LinkContainer to="/login">
-                  <Nav.Link><i className="fas fa-sign-in"></i> Sign In</Nav.Link>
-                </LinkContainer>
+                            <NavDropdown title={userInfo.name} id='username'>
+                                <LinkContainer to="/profile">
+                                    <NavDropdown.Item><i className="fas fa-user"></i> Profile</NavDropdown.Item>
+                                </LinkContainer>
 
-                <LinkContainer to="/logout">
-                    <Nav.Link><i className="fas fa-sign-out"></i> Sign Out</Nav.Link>
-                </LinkContainer>
+                                <NavDropdown.Item onClick={logOutHandler}><i className="fas fa-sign-out"></i> Logout</NavDropdown.Item>
+
+                            </NavDropdown>
+                        </>
+                    ) : (
+                        <LinkContainer to="/login">
+                            <Nav.Link><i className="fas fa-sign-in"></i> Sign In</Nav.Link>
+                        </LinkContainer>
+                    )
+                }
+
+
             </Nav>
           </Navbar.Collapse>
 
