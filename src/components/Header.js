@@ -2,10 +2,9 @@ import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {LinkContainer} from "react-router-bootstrap";
 import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
-import {useNavigation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import {logout} from "../actions/userActions";
-import {useNavigate} from "react-router-dom";
 
 function Header() {
     const navigate = useNavigate();
@@ -48,9 +47,14 @@ function Header() {
                             </NavDropdown>
                         </>
                     ) : (
-                        <LinkContainer to="/login">
-                            <Nav.Link><i className="fas fa-sign-in"></i> Sign In</Nav.Link>
-                        </LinkContainer>
+                        <>
+                            <LinkContainer to="/login">
+                                <Nav.Link><i className="fas fa-sign-in"></i> Sign In</Nav.Link>
+                            </LinkContainer>
+                            <LinkContainer to="/register">
+                                <Nav.Link><i className="fas fa-user-plus"></i> Sign Up</Nav.Link>
+                            </LinkContainer>
+                        </>
                     )
                 }
 

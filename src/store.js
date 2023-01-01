@@ -8,16 +8,18 @@ import {
     productDetailsReducer
 } from './reducers/productReducers';
 import {cartReducer} from "./reducers/cartReducers";
-import {userLoginReducer} from  './reducers/userReducers';
+import {userLoginReducer, userRegisterReducer} from  './reducers/userReducers';
 
 // user reducer
 const reducer = combineReducers({
+    // product
     productList: productListReducer,
     productDetails: productDetailsReducer,
-
+    // cart
     cart: cartReducer,
-
+    // user
     userLogin: userLoginReducer,
+    userRegister: userRegisterReducer,
 });
 
 // cart get from local storage
