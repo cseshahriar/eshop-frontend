@@ -4,11 +4,19 @@ import {
     USER_LOGIN_REQUEST,
     USER_LOGIN_SUCCESS,
     USER_LOGIN_FAIL,
+
     USER_LOGOUT,
+
     USER_REGISTER_REQUEST,
     USER_REGISTER_SUCCESS,
-    USER_REGISTER_FAIL
+    USER_REGISTER_FAIL,
+
+    USER_DETAIL_REQUEST,
+    USER_DETAIL_SUCCESS,
+    USER_DETAIL_FAIL
 } from "../constants/userConstants";
+
+import  { BASE_API_URL } from '../constants/baseConstants';
 
 export const login = (email, password) => async (dispatch) => {
     try {
@@ -23,7 +31,7 @@ export const login = (email, password) => async (dispatch) => {
         }
 
         const { data } = await axios.post(
-            'http://127.0.0.1:8000/api/users/login/',
+            BASE_API_URL + 'users/login/',
             {'username': email, 'password': password},
             config
         )
@@ -63,21 +71,63 @@ export const register = (name, email, password) => async (dispatch) => {
         }
 
         const { data } = await axios.post(
-            'http://127.0.0.1:8000/api/users/register/',
+            BASE_API_URL + 'users/register/',
             {'name': name, 'email': email, 'password': password},
             config
         )
-        console.log('login data', data)
 
         dispatch({
             type: USER_REGISTER_SUCCESS,
             payload: data
-        })
+        });
+
+        // after register auto login
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data
+        });
+
         localStorage.setItem('userInfo', JSON.stringify(data));
 
     } catch (error) {
         dispatch({
             type: USER_REGISTER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+// userDetails
+export const getUserDetails = (id) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: USER_DETAIL_REQUEST
+        })
+        const {
+            userLogin: {userInfo} // get logged in user from state
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `${BASE_API_URL}users/${id}`,
+            config
+        )
+        console.log('user profile', data);
+        dispatch({
+            type: USER_DETAIL_SUCCESS,
+            payload: data
+        });
+    } catch (error) {
+        dispatch({
+            type: USER_DETAIL_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
