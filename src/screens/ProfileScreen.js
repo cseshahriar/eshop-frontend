@@ -4,8 +4,9 @@ import { Form, Button, Row, Col } from 'react-bootstrap';
 import {useDispatch, useSelector} from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import {getUserDetails, register} from "../actions/userActions";
+import {getUserDetails, updateUserProfile} from "../actions/userActions";
 import FormContainer from "../components/FormContainer";
+import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
 
 const ProfileScreen = () => {
     const location = useLocation();
@@ -24,11 +25,15 @@ const ProfileScreen = () => {
     const userLogin = useSelector(state => state.userLogin);
     const {userInfo} = userLogin;
 
+    const userUpdateProfile = useSelector(state => state.userUpdateProfile);
+    const {success} = userUpdateProfile;
+
     useEffect(() => {
         if(!userInfo) {
             navigate('/login');
         } else {
-            if(!user || !user.name) {
+            if(!user || !user.name || success) {
+                dispatch({type: USER_UPDATE_PROFILE_RESET})
                 dispatch(getUserDetails('profile'))
             } else {
                 setName(user.name);
@@ -36,7 +41,7 @@ const ProfileScreen = () => {
             }
         }
 
-    }, [dispatch, location, userInfo, user]);
+    }, [dispatch, location, userInfo, user, success]);
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -44,6 +49,12 @@ const ProfileScreen = () => {
             setMessage('Passwords do not match.')
         } else {
             console.log('updating...');
+            dispatch(updateUserProfile({
+                'id': user._id,
+                'name': name,
+                'email': email,
+                'password': password
+            }));
         }
     }
 
@@ -84,7 +95,6 @@ const ProfileScreen = () => {
                     <Form.Group controlId='password'>
                         <Form.Label>Password</Form.Label>
                         <Form.Control
-                            required
                             type='password'
                             placeholder='Enter Password'
                             value={password}
@@ -96,7 +106,6 @@ const ProfileScreen = () => {
                     <Form.Group controlId='passwordConfirm'>
                         <Form.Label>Confirm Password</Form.Label>
                         <Form.Control
-                            required
                             type='password'
                             placeholder='Confirm Password'
                             value={confirmPassword}
