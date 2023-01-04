@@ -14,6 +14,7 @@ import {
     USER_DETAIL_REQUEST,
     USER_DETAIL_SUCCESS,
     USER_DETAIL_FAIL,
+    USER_DETAIL_RESET,
 
     USER_UPDATE_PROFILE_REQUEST,
     USER_UPDATE_PROFILE_SUCCESS,
@@ -60,7 +61,8 @@ export const login = (email, password) => async (dispatch) => {
 
 export const logout = () => (dispatch) => {
     localStorage.removeItem('userInfo');
-    dispatch({type: USER_LOGOUT})
+    dispatch({type: USER_LOGOUT});
+    dispatch({type: USER_DETAIL_RESET});
 }
 
 export const register = (name, email, password) => async (dispatch) => {
