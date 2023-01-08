@@ -12,6 +12,8 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import CartScreen from "./screens/CartScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ShippingScreen from "./screens/ShippingScreen";
+import PageNotFound from "./screens/PageNotFound";
 
 function App() {
   return (
@@ -24,13 +26,17 @@ function App() {
               <Container>
                   <Routes>
                       <Route path="/" element={<HomeScreen />} />
+
                       <Route path="/product/:id" element={<ProductScreen />} />
 
                       <Route path="/login" element={<LoginScreen />} />
                       <Route path="/register" element={<RegisterScreen />} />
-                      <Route path="/profile" element={<ProfileScreen />} />
 
+                      <Route path="/profile" element={<ProfileScreen />} />
+                      <Route path="/shipping" element={<ShippingScreen />} />
                       <Route path="/cart/:id?" element={<CartScreen />} />
+
+                      <Route path="/*" element={<PageNotFound />} />
                   </Routes>
               </Container>
           </main>
