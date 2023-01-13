@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
 import CheckoutSteps from "../components/CheckoutSteps";
 import {createOrderActions} from "../actions/orderActions";
+import {ORDER_CREATE_RESET} from "../constants/orderConstants";
 
 const PlaceOrderScreen = () => {
     const location = useLocation();
@@ -31,7 +32,8 @@ const PlaceOrderScreen = () => {
 
     useEffect(() => {
         if(success) {
-            navigate(`/order/${order._id}`)
+            navigate(`/order/${order._id}`);
+            dispatch({type: ORDER_CREATE_RESET}); // call ORDER_CREATE_RESET reducer for this case
         }
     }, [success, navigate]); // change if success change or location change
 

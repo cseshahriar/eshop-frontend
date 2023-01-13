@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Link, useParams, useLocation} from "react-router-dom";
+import {Link, useParams, useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {Row, Col, ListGroup, Image, Form, Button, Card} from "react-bootstrap";
 
@@ -10,6 +10,7 @@ function CartScreen() {
     const params = useParams();
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const productId = params.id
     const qty = location.search ? Number(location.search.split('=')[1]) : 1
@@ -27,6 +28,10 @@ function CartScreen() {
 
     const removeFromCartHandler = (id) => {
         dispatch(removeFromCart(id));
+    }
+
+    const checkoutHandler = () => {
+        navigate('/shipping');
     }
 
     return (
@@ -99,6 +104,17 @@ function CartScreen() {
 
                         </ListGroup.Item>
                     </ListGroup>
+
+                    <ListGroup.Item>
+                        <Button
+                            type='button'
+                            className='btn-block'
+                            disabled={cartItems.length === 0}
+                            onClick={checkoutHandler}
+                        >
+                            Proceed To Checkout
+                        </Button>
+                    </ListGroup.Item>
                 </Card>
             </Col>
         </Row>

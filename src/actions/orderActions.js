@@ -10,6 +10,8 @@ import {
     USER_UPDATE_PROFILE_REQUEST,
     USER_UPDATE_PROFILE_SUCCESS
 } from "../constants/userConstants";
+import {CART_CLEAR_ITEMS} from "../constants/cartConstants";
+
 import {BASE_API_URL} from "../constants/baseConstants";
 
 
@@ -35,10 +37,21 @@ export const createOrderActions = (order) => async (dispatch, getState) => {
             order,
             config
         )
+
         dispatch({
             type: ORDER_CREATE_SUCCESS,
             payload: data
         });
+
+        // clear state
+        dispatch({
+            type: CART_CLEAR_ITEMS,
+            payload: data
+        }); // clear the cart
+        // remove from local storage
+        localStorage.removeItem('cartItems');
+
+
     } catch (error) {
         dispatch({
             type: ORDER_CREATE_FAIL,
