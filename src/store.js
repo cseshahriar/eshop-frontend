@@ -15,6 +15,8 @@ import {
     userUpdateProfileReducer
 } from './reducers/userReducers';
 
+import {orderCreateReducer} from "./reducers/orderReducers";
+
 // user reducer
 const reducer = combineReducers({
     // product
@@ -22,6 +24,8 @@ const reducer = combineReducers({
     productDetails: productDetailsReducer,
     // cart
     cart: cartReducer,
+    // order
+    orderCreate: orderCreateReducer,
     // user
     userLogin: userLoginReducer,
     userRegister: userRegisterReducer,
