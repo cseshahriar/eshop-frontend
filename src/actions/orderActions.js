@@ -3,15 +3,22 @@ import {
     ORDER_CREATE_REQUEST,
     ORDER_CREATE_SUCCESS,
     ORDER_CREATE_FAIL,
+
     ORDER_DETAIL_REQUEST,
     ORDER_DETAIL_SUCCESS,
-    ORDER_DETAIL_FAIL
+    ORDER_DETAIL_FAIL,
+
+    ORDER_PAY_REQUEST,
+    ORDER_PAY_SUCCESS,
+    ORDER_PAY_FAIL,
+    ORDER_PAY_RESET
 } from "../constants/orderConstants";
 import {
     USER_LOGIN_SUCCESS,
     USER_UPDATE_PROFILE_FAIL,
     USER_UPDATE_PROFILE_REQUEST,
-    USER_UPDATE_PROFILE_SUCCESS
+    USER_UPDATE_PROFILE_SUCCESS,
+
 } from "../constants/userConstants";
 import {CART_CLEAR_ITEMS} from "../constants/cartConstants";
 
@@ -95,6 +102,45 @@ export const createDetailsActions = (id) => async (dispatch, getState) => {
     } catch (error) {
         dispatch({
             type: ORDER_DETAIL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const orderPayActions = (id, paymentResult) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: ORDER_PAY_REQUEST
+        })
+
+        // get logged in user info
+        const {
+            userLogin: {userInfo}
+        } = getState();
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.put(
+            `${BASE_API_URL}orders/${id}/pay/`,
+            paymentResult,
+            config
+        )
+
+        dispatch({
+            type: ORDER_PAY_SUCCESS,
+            payload: data
+        });
+
+
+    } catch (error) {
+        dispatch({
+            type: ORDER_PAY_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

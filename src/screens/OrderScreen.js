@@ -12,7 +12,8 @@ const OrderScreen = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // get id from url
-    const {orderId} = useParams();
+    const { id } = useParams();
+    console.log('order id', id)
 
     // get order from state
     const orderDetails = useSelector(state => state.orderDetails);
@@ -24,10 +25,10 @@ const OrderScreen = () => {
     }
 
     useEffect(() => {
-        if(!order || order._id !== Number(orderId)) {
-            dispatch(createDetailsActions(orderId));
+        if(!order || order._id !== Number(id)) {
+            dispatch(createDetailsActions(id));
         }
-    }, [order, orderId]); // change if success change or location change
+    }, [dispatch,order, id]); // change if success change or location change
 
     return loading ? (
         <Loader/>
