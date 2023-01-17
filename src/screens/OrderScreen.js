@@ -5,14 +5,17 @@ import {Link, useNavigate, useLocation, useParams} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import {createDetailsActions, orderPayActions} from "../actions/orderActions";
 
+import {createDetailsActions, orderPayActions, deliverOrder} from "../actions/orderActions";
+
+import {ORDER_PAY_RESET} from "../constants/orderConstants";
 import { PayPalButton } from "react-paypal-button-v2";
 
 const OrderScreen = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     // get id from url
     const { id } = useParams();
     console.log('order id', id)
@@ -22,10 +25,15 @@ const OrderScreen = () => {
     // get order from state
     const orderDetails = useSelector(state => state.orderDetails);
     const { order, error, loading } = orderDetails;
-    console.log('order', order);
 
     const orderPay = useSelector(state => state.orderPay);
     const {loading: loadingPay, success: successPay } = orderPay;
+
+    const orderDeliver = useSelector(state => state.orderDeliver)
+    const { loading: loadingDeliver, success: successDeliver } = orderDeliver
+
+    const userLogin = useSelector(state => state.userLogin)
+    const { userInfo } = userLogin
 
     // calculate order
     if(!loading && !error) {
@@ -47,12 +55,13 @@ const OrderScreen = () => {
 
     useEffect(() => {
         if(!order || successPay || order._id !== Number(id)) {
+            dispatch({type: ORDER_PAY_RESET});
             dispatch(createDetailsActions(id));
         } else if(!order.isPaid) {
             if(!window.paypal) {
                 addPaypalScript();
             } else {
-                sdkReady(true);
+                setSdkReady(true);
             }
         }
     }, [dispatch, order, id, successPay]); // change if success change or location change
