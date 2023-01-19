@@ -29,6 +29,7 @@ import {
 
 import  { BASE_API_URL } from '../constants/baseConstants';
 import {ORDER_DELIVER_RESET, ORDER_LIST_MY_REQUEST} from "../constants/orderConstants";
+import {CART_SAVE_SHIPPING_ADDRESS_RESET} from "../constants/cartConstants";
 
 export const login = (email, password) => async (dispatch) => {
     try {
@@ -68,10 +69,12 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
     // remove all state for the user
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('shippingAddress');
     dispatch({type: USER_LOGOUT});
     dispatch({type: USER_DETAIL_RESET});
     dispatch({type: ORDER_LIST_MY_REQUEST});
     dispatch({type: USER_LIST_RESET});
+
 }
 
 export const register = (name, email, password) => async (dispatch) => {
