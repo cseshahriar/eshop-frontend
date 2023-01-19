@@ -8,7 +8,7 @@ import Loader from "../components/Loader";
 
 import {createDetailsActions, orderPayActions, deliverOrder} from "../actions/orderActions";
 
-import {ORDER_PAY_RESET} from "../constants/orderConstants";
+import {ORDER_DELIVER_RESET, ORDER_PAY_RESET} from "../constants/orderConstants";
 import { PayPalButton } from "react-paypal-button-v2";
 
 const OrderScreen = () => {
@@ -54,8 +54,14 @@ const OrderScreen = () => {
     // EEt5ez0gspUcjj80EXQMqcWrT_ic-8u5C5TZ6iM41RUE9xkVixEr5ing1BDXvdy44XgUMG0SBauCT0YP
 
     useEffect(() => {
-        if(!order || successPay || order._id !== Number(id)) {
+        if(!userInfo) {
+            navigate('/login');
+        }
+
+        if(!order || successPay || order._id !== Number(id) || successDeliver) {
             dispatch({type: ORDER_PAY_RESET});
+            dispatch({type: ORDER_DELIVER_RESET})
+
             dispatch(createDetailsActions(id));
         } else if(!order.isPaid) {
             if(!window.paypal) {
@@ -64,11 +70,17 @@ const OrderScreen = () => {
                 setSdkReady(true);
             }
         }
-    }, [dispatch, order, id, successPay]); // change if success change or location change
+    }, [dispatch, order, id, successPay, successDeliver]); // change if success change or location change
+
 
     const successPaymentHandler = (paymentResult) => {
         dispatch(orderPayActions(id, paymentResult));
     }
+
+    const deliverHandler = () => {
+        dispatch(deliverOrder(order))
+    }
+
     return loading ? (
         <Loader/>
     ) : error ? (
@@ -91,13 +103,26 @@ const OrderScreen = () => {
                                 {order.shippingAddress.postalCode},
                                 {order.shippingAddress.country}
                             </p>
+
+                            {order.isDelivered ? (
+                                <Message variant='success'>Delivered on {order.deliveredAt}</Message>
+                            ) : (
+                                <Message variant='warning'>Not Delivered</Message>
+                            )}
                         </ListGroup.Item>
+
                         <ListGroup.Item>
                             <h2>Payment Method</h2>
                             <p>
                                 <strong>Method: </strong>
                                 {order.paymentMethod}
                             </p>
+
+                            {order.isPaid ? (
+                                <Message variant='success'>Paid on {order.paidAt}</Message>
+                            ) : (
+                                <Message variant='warning'>Not Paid</Message>
+                            )}
                         </ListGroup.Item>
 
                         <ListGroup.Item>
@@ -112,7 +137,7 @@ const OrderScreen = () => {
                                                 <ListGroup.Item key={index}>
                                                     <Row>
                                                         <Col md={1}>
-                                                            <Image src={item.img_url} alt={item.name} fluid rounded />
+                                                            <Image src={item.image} alt={item.name} fluid rounded />
                                                         </Col>
                                                         <Col>
                                                             <Link to={`/product/${item.product}`}>{item.name}</Link>
@@ -181,6 +206,19 @@ const OrderScreen = () => {
                                 </ListGroup.Item>
                             )}
                         </ListGroup>
+
+                        {loadingDeliver && <Loader />}
+                        {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                            <ListGroup.Item>
+                                <Button
+                                    type='button'
+                                    className='btn btn-block'
+                                    onClick={deliverHandler}
+                                >
+                                    Mark As Delivered
+                                </Button>
+                            </ListGroup.Item>
+                        )}
                     </Card>
                 </Col>
             </Row>
