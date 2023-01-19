@@ -19,10 +19,16 @@ import {
     USER_UPDATE_PROFILE_REQUEST,
     USER_UPDATE_PROFILE_SUCCESS,
     USER_UPDATE_PROFILE_FAIL,
-    USER_UPDATE_PROFILE_RESET
+    USER_UPDATE_PROFILE_RESET,
+
+    USER_LIST_REQUEST,
+    USER_LIST_SUCCESS,
+    USER_LIST_FAIL,
+    USER_LIST_RESET
 } from "../constants/userConstants";
 
 import  { BASE_API_URL } from '../constants/baseConstants';
+import {ORDER_DELIVER_RESET, ORDER_LIST_MY_REQUEST} from "../constants/orderConstants";
 
 export const login = (email, password) => async (dispatch) => {
     try {
@@ -60,9 +66,12 @@ export const login = (email, password) => async (dispatch) => {
 }
 
 export const logout = () => (dispatch) => {
+    // remove all state for the user
     localStorage.removeItem('userInfo');
     dispatch({type: USER_LOGOUT});
     dispatch({type: USER_DETAIL_RESET});
+    dispatch({type: ORDER_LIST_MY_REQUEST});
+    dispatch({type: USER_LIST_RESET});
 }
 
 export const register = (name, email, password) => async (dispatch) => {
@@ -178,6 +187,42 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     } catch (error) {
         dispatch({
             type: USER_UPDATE_PROFILE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+
+export const userListActions = () => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: USER_LIST_REQUEST
+        })
+        const {
+            userLogin: {userInfo} // get logged in user from state
+        } = getState();
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `${BASE_API_URL}users/`,
+            config
+        )
+        dispatch({
+            type: USER_LIST_SUCCESS,
+            payload: data
+        });
+    } catch (error) {
+        dispatch({
+            type: USER_LIST_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
