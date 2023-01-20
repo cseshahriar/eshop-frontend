@@ -4,10 +4,10 @@ import { Form, Button } from 'react-bootstrap';
 import {useDispatch, useSelector} from "react-redux";
 
 import FormContainer from '../components/FormContainer'
-import { getUserDetails } from "../actions/userActions"
+import { getUserDetails, userUpdateActions } from "../actions/userActions"
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-
+import {USER_UPDATE_RESET} from "../constants/userConstants";
 
 
 function UserEditScreen() {
@@ -25,18 +25,32 @@ function UserEditScreen() {
     const userDetails = useSelector(state => state.userDetails);
     const {error, loading, user} = userDetails;
 
+    const userUpdate = useSelector(state => state.userUpdate);
+    const {error: updateError, loading: updateLoadin, success: updateSuccess} = userUpdate;
+
     useEffect(() => {
-        if(!user.name || user._id !== Number(id)) {
-            dispatch(getUserDetails(id));
+        if(updateSuccess) {
+            dispatch({type: USER_UPDATE_RESET}); // form reset
+            navigate('/admin/userlist');  // redirect
         } else {
-            setName(user.name);
-            setEmail(user.email);
-            setIsAdmin(user.isAdmin);
+            if(!user.name || user._id !== Number(id)) {
+                dispatch(getUserDetails(id));
+            } else {
+                setName(user.name);
+                setEmail(user.email);
+                setIsAdmin(user.isAdmin);
+            }
         }
-    }, [user, id]);
+    }, [user, id, updateSuccess, navigate]);
 
     const submitHandler = (e) => {
         e.preventDefault();
+        dispatch(userUpdateActions({
+            _id: user._id,
+            name,
+            email,
+            isAdmin
+        }));
     }
 
     return (
@@ -44,6 +58,9 @@ function UserEditScreen() {
             <Link to="/admin/userlist">Go Back</Link>
             <FormContainer>
                 <h1>Edit User</h1>
+                { updateLoadin && <Loader/> }
+                { updateError && <Message variant="danger">{updateError}</Message>}
+
                 {
                     loading
                         ? <Loader /> : error ? <Message variant='danger'>{error}</Message>
