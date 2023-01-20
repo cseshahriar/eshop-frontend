@@ -13,7 +13,8 @@ import {
     userRegisterReducer,
     userDetailReducer,
     userUpdateProfileReducer,
-    userListReducer
+    userListReducer,
+    userDeleteReducer
 } from './reducers/userReducers';
 
 import {
@@ -48,6 +49,7 @@ const reducer = combineReducers({
     userDetails: userDetailReducer,
     userUpdateProfile: userUpdateProfileReducer,
     userList: userListReducer,
+    userDelete: userDeleteReducer
 });
 
 // cart get from local storage
