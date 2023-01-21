@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
-import {listProducts} from "../actions/productActions";
+import { listProducts, ProductDeleteAction } from "../actions/productActions";
 
 const ProductListScreen = () => {
     const dispatch = useDispatch();
@@ -15,6 +15,9 @@ const ProductListScreen = () => {
 
     const productList = useSelector(state => state.productList);
     const { loading, error, products } = productList;
+
+    const productDelete = useSelector(state => state.productDelete);
+    const { loading: deleteLoading, error: errorDelete, success: deleteSuccess } = productDelete;
 
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
@@ -25,7 +28,7 @@ const ProductListScreen = () => {
         } else {
             navigate('/login')
         }
-    }, [dispatch, navigate, userInfo]);
+    }, [dispatch, navigate, userInfo, deleteSuccess]);
 
     const createProductHandler = (e) => {
         e.preventDefault();
@@ -33,7 +36,7 @@ const ProductListScreen = () => {
 
     const deleteHandler = (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            // dispatch();
+            dispatch(ProductDeleteAction(id));
             // window.location.reload(true);
         }
     }
@@ -50,7 +53,10 @@ const ProductListScreen = () => {
                     </Button>
                 </Col>
             </Row>
-            <h1>Products</h1>
+
+            { deleteLoading && <Loader/> }
+            { errorDelete && <Message variant="danger"> {errorDelete}</Message> }
+
             {
                 loading
                     ? (<Loader />)
@@ -79,13 +85,13 @@ const ProductListScreen = () => {
                                         <td>{ product.brand }</td>
 
                                         <td>
-                                            <LinkContainer to={`/admin/product/${product.id}/edit`}>
+                                            <LinkContainer to={`/admin/product/${product._id}/edit`}>
                                                 <Button variant='light' className='btn-sm'>
                                                     <i className='fas fa-edit'></i>
                                                 </Button>
                                             </LinkContainer>
 
-                                            <Button variant='danger' className='btn-sm' onClick={ () => deleteHandler(product.id)}>
+                                            <Button variant='danger' className='btn-sm' onClick={ () => deleteHandler(product._id)}>
                                                 <i className='fas fa-trash'></i>
                                             </Button>
                                         </td>
