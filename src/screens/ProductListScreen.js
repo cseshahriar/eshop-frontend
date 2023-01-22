@@ -6,7 +6,8 @@ import {useDispatch, useSelector} from "react-redux";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
-import { listProducts, ProductDeleteAction } from "../actions/productActions";
+import { listProducts, ProductDeleteAction, productCreateAction } from "../actions/productActions";
+import {PRODUCT_CREATE_RESET} from "../constants/productConstants";
 
 const ProductListScreen = () => {
     const dispatch = useDispatch();
@@ -19,19 +20,34 @@ const ProductListScreen = () => {
     const productDelete = useSelector(state => state.productDelete);
     const { loading: deleteLoading, error: errorDelete, success: deleteSuccess } = productDelete;
 
+    const productCreate = useSelector(state => state.productCreate);
+    const {
+        loading: createLoading, error: createError, success: createSuccess,
+        product: createdProduct
+    } = productCreate;
+
     const userLogin = useSelector(state => state.userLogin);
     const { userInfo } = userLogin;
 
     useEffect(() => {
-        if (userInfo && userInfo.isAdmin) {
-            dispatch(listProducts());
-        } else {
+        dispatch({type: PRODUCT_CREATE_RESET});
+        if (!userInfo.isAdmin) {
+
             navigate('/login')
         }
-    }, [dispatch, navigate, userInfo, deleteSuccess]);
 
-    const createProductHandler = (e) => {
-        e.preventDefault();
+        if(createSuccess) {
+            navigate(`/admin/product/${productCreate.id}/edit/`)
+        } else {
+            dispatch(listProducts());
+        }
+    }, [
+        dispatch, navigate, userInfo, deleteSuccess,
+        createSuccess, createdProduct
+    ]);
+
+    const createProductHandler = () => {
+        dispatch(productCreateAction());
     }
 
     const deleteHandler = (id) => {
@@ -56,6 +72,9 @@ const ProductListScreen = () => {
 
             { deleteLoading && <Loader/> }
             { errorDelete && <Message variant="danger"> {errorDelete}</Message> }
+
+            { createLoading && <Loader/> }
+            { createError && <Message variant="danger"> {createError}</Message> }
 
             {
                 loading
