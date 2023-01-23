@@ -1,13 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
+import axios from "axios";
 import { Form, Button } from 'react-bootstrap';
-import {useDispatch, useSelector} from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
 
-import FormContainer from '../components/FormContainer'
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import {listProductDetails} from "../actions/productActions";
-
+import FormContainer from '../components/FormContainer'
+import { listProductDetails, productUpdateAction } from "../actions/productActions";
+import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+import { BASE_API_URL } from "../constants/baseConstants";
 
 function ProductEditScreen() {
     const location = useLocation();
@@ -22,34 +24,54 @@ function ProductEditScreen() {
     const [image, setImage] = useState('');
     const [brand, setBrand] = useState('');
     const [category, setCategory] = useState('');
-    const [countInStock, setCountInStock] = useState('');
+    const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
-
-
-    const [message, setMessage] = useState('');
 
     const productDetails = useSelector(state => state.productDetails);
     const {error, loading, product} = productDetails;
+    console.log('product ', product, id);
+
+    const productUpdate = useSelector(state => state.productUpdate);
+    const {
+        error: updateError,
+        loading: updateLoading,
+        success: updateSuccess
+    } = productUpdate;
 
     useEffect(() => {
-        if(!product.name || product._id !== Number(id)) {
-            dispatch(listProductDetails(id));
+        if(updateSuccess) {
+            dispatch({type: PRODUCT_UPDATE_RESET});
+            navigate('/admin/productlist');
         } else {
-            // initialize old data
-            setName(product.name);
-            setPrice(product.price);
-            setImage(product.image);
-            setBrand(product.brand);
-            setCategory(product.category);
-            setCountInStock(product.countInStock);
-            setDescription(product.description);
+            if(!product.name || product._id !== Number(id)) {
+                dispatch(listProductDetails(id));
+            } else {
+                setName(product.name);
+                setPrice(product.price);
+                setImage(product.image);
+                setBrand(product.brand);
+                setCategory(product.category);
+                setCountInStock(product.countInStock);
+                setDescription(product.description);
+            }
         }
-
-    }, [product, id, navigate, navigate]);
+    }, [dispatch, product, id, navigate, updateSuccess]);
 
     const submitHandler = (e) => {
+        console.log('product update');
         e.preventDefault();
         // update product
+        dispatch(productUpdateAction({
+                _id: Number(id),
+                name,
+                price,
+                image,
+                brand,
+                category,
+                countInStock,
+                description
+            })
+        )
     }
 
     return (
@@ -57,8 +79,8 @@ function ProductEditScreen() {
             <Link to="/admin/productlist">Go Back</Link>
             <FormContainer>
                 <h1>Edit Product</h1>
-                { loading && <Loader/> }
-                { error && <Message variant="danger">{error}</Message>}
+                { updateLoading && <Loader/> }
+                { updateError && <Message variant="danger">{updateError}</Message>}
 
                 {
                     loading
@@ -91,12 +113,13 @@ function ProductEditScreen() {
                                         <Form.Label>Image</Form.Label>
                                         <Form.Control
                                             type='text'
-                                            placeholder='Enter Image'
+                                            placeholder='Enter image'
                                             value={image}
                                             onChange={(e) => setImage(e.target.value)}
                                         >
                                         </Form.Control>
                                     </Form.Group>
+
 
                                     <Form.Group controlId='brand'>
                                         <Form.Label>Brand</Form.Label>
