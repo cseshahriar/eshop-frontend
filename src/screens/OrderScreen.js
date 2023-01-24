@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { Button, Row, Col, ListGroup, Image, Card} from 'react-bootstrap';
-
 import {Link, useNavigate, useLocation, useParams} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import Message from "../components/Message";
@@ -18,7 +17,6 @@ const OrderScreen = () => {
 
     // get id from url
     const { id } = useParams();
-    console.log('order id', id)
 
     const [sdkReady, setSdkReady] = useState(false);
 
@@ -26,9 +24,11 @@ const OrderScreen = () => {
     const orderDetails = useSelector(state => state.orderDetails);
     const { order, error, loading } = orderDetails;
 
+    // order pay
     const orderPay = useSelector(state => state.orderPay);
     const {loading: loadingPay, success: successPay } = orderPay;
 
+    // get order delivery
     const orderDeliver = useSelector(state => state.orderDeliver)
     const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
@@ -49,9 +49,6 @@ const OrderScreen = () => {
         }
         document.body.appendChild(script);
     }
-
-    // secret
-    // EEt5ez0gspUcjj80EXQMqcWrT_ic-8u5C5TZ6iM41RUE9xkVixEr5ing1BDXvdy44XgUMG0SBauCT0YP
 
     useEffect(() => {
         if(!userInfo) {
@@ -78,7 +75,7 @@ const OrderScreen = () => {
     }
 
     const deliverHandler = () => {
-        dispatch(deliverOrder(order))
+        dispatch(deliverOrder(order));
     }
 
     return loading ? (
