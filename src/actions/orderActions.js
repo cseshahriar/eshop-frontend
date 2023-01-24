@@ -260,7 +260,7 @@ export const listOrders = () => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            `${BASE_API_URL}/orders/`,
+            `${BASE_API_URL}orders/`,
             config
         )
 

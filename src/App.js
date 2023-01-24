@@ -8,17 +8,23 @@ import Footer from './components/Footer';
 
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from "./screens/ProductScreen";
+
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import CartScreen from "./screens/CartScreen";
+
 import ProfileScreen from "./screens/ProfileScreen";
 import ShippingScreen from "./screens/ShippingScreen";
 import PageNotFound from "./screens/PageNotFound";
+
 import PaymentScreen from "./screens/PaymentScreen";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
+import OrderListScreen from "./screens/OrderListScreen";
+
 import UserListScreen from "./screens/UserListScreen";
 import UserEditScreen from "./screens/UserEditScreen";
+
 import ProductListScreen from "./screens/ProductListScreen";
 import ProductEditScreen from "./screens/ProductEditScreen";
 
@@ -54,6 +60,7 @@ function App() {
 
                       <Route path="/admin/productlist/" element={<ProductListScreen />} />
                       <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
+                      <Route path='/admin/orderlist/' element={<OrderListScreen />} />
                   </Routes>
               </Container>
           </main>
