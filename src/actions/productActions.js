@@ -31,7 +31,7 @@ export const listProducts = (keyword = '') => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_LIST_REQUEST })
 
-        const { data } = await axios.get(`http://127.0.0.1:8000/api/products`)
+        const { data } = await axios.get(`${BASE_API_URL}products${keyword}`)
             .then(response => response.data)
 
         dispatch({

@@ -4,12 +4,20 @@ import { Row, Col } from 'react-bootstrap';
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { listProducts } from "../actions/productActions";
+import {Link, useLocation, useNavigate, useParams} from 'react-router-dom';
 
 import Product from '../components/Product';
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
 function HomeScreen() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const params = useParams();
+
+    let keyword = location.search;
+    console.log(keyword);
+
     // useDispatch returns the store's dispatch method to let you dispatch actions
     const dispatch = useDispatch();
     // useSelector reads a value from the store state and subscribes to updates
@@ -17,8 +25,8 @@ function HomeScreen() {
     const {error, loading, products} = productList;
 
     useEffect(() => {
-        dispatch(listProducts()); // action trigger
-    }, [dispatch]); // when component load
+        dispatch(listProducts(keyword)); // action trigger
+    }, [dispatch, keyword]); // when component load
 
   return (
     <div>

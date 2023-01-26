@@ -3,13 +3,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {LinkContainer} from "react-router-bootstrap";
 import {Container, Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import {useNavigate} from "react-router-dom";
-
+import SearchBox from "./SearchBox";
 import {logout} from "../actions/userActions";
 
 function Header() {
     const navigate = useNavigate();
+
     const userLogin = useSelector(state => state.userLogin);
     const {userInfo } = userLogin;
+
     const dispatch = useDispatch();
 
     const logOutHandler = () => {
@@ -27,9 +29,8 @@ function Header() {
           </LinkContainer>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
+            <Nav className="me-auto">
                 {
                     userInfo ? (
                         <>
@@ -75,6 +76,8 @@ function Header() {
                 }
 
             </Nav>
+
+              <SearchBox />
           </Navbar.Collapse>
 
         </Container>
