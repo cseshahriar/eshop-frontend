@@ -11,6 +11,8 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Paginate from "../components/Pagination";
 
+import ProductCarousel from "../components/ProductCarousel";
+
 function HomeScreen() {
     const location = useLocation();
 
@@ -28,6 +30,8 @@ function HomeScreen() {
 
   return (
     <div>
+        {!keyword && <ProductCarousel />}
+
         <h1>Latest products</h1>
         {
             loading ? <Loader/>
